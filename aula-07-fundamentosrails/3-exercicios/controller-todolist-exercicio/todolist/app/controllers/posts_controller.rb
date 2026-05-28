@@ -16,7 +16,6 @@ class PostsController < ApplicationController
       render json: {message:"Formulario de edição do post #{params[:id]}"}
   end
 
-
   def edit
     render json: {message:"Editando o post #{params[:id]}"}
   end
@@ -29,5 +28,14 @@ class PostsController < ApplicationController
     render json: {message:"Excluindo o post #{params[:id]}"}
   end
 
+
+
+  def comments
+    render json: {message:"Listagem de comentários para o post #{params[:id]}"}
+  end
+
+  def create_comment
+    render json: {message:"Criando um novo comentário para o post #{params[:id]}"}
+  end
 
 end
