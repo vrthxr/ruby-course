@@ -1,0 +1,9 @@
+<%= form_tag("/confirmation", method: "post", data: { turbo: false }) do %>
+<label for="nome">Name:</label>
+<%= text_field_tag "nome", nil, required: true%>
+<label for="senha">Senha</label> 
+<%= text_field_tag "senha", nil, required:true%>
+<label for="email">E-mail</label>
+<%= email_field_tag "email", nil, required:true%>
+<%= submit_tag "Add User"%>
+<%end%>
