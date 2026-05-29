@@ -1,10 +1,19 @@
-<nav>
-    <%=link_to 'Home', root_path%>
-    <% if user_signed_in? %>
-    <%= current_user.email %>
-    <%=link_to 'Articles', articles_path%>
-    <%=link_to 'Logout', destroy_user_session_path, data:{turbo_method: :delete}%>
-    <% else %>
-    <%=link_to 'Login', new_user_session_path%>
-    <% end %>
+<nav class="fixed top-0 inset-x-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+  <div class="container mx-auto px-5 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <%= link_to "Home", root_path, class: "font-bold text-lg text-gray-900 hover:text-blue-600" %>
+      <% if user_signed_in? %>
+        <%= link_to "Articles", articles_path, class: "font-medium text-gray-600 hover:text-blue-600" %>
+      <% end %>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <% if user_signed_in? %>
+        <span class="text-sm text-gray-500"><%= current_user.email %></span>
+        <%= link_to "Logout", destroy_user_session_path, data: { turbo_method: :delete }, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-50 text-gray-700 font-medium" %>
+      <% else %>
+        <%= link_to "Login", new_user_session_path, class: "rounded-md px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+      <% end %>
+    </div>
+  </div>
 </nav>
