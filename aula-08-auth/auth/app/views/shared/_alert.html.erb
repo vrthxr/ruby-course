@@ -1,8 +1,18 @@
-<div>
-    <% if notice %>
-    <p class="notice"><%= notice %></p>
-    <% end %>
-    <% if alert %>
-    <p class="alert"><%= alert %></p>
-    <% end %>
-</div>
+<% if notice.present? %>
+  <div class="fixed top-5 right-5 z-50 max-w-sm rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg">
+    <%= notice %>
+  </div>
+<% end %>
+
+<% if alert.present? %>
+  <dialog data-controller="dialog" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-xl backdrop:bg-black/50">
+    <div class="max-w-sm p-6 text-center">
+      <p class="mb-5 text-gray-800"><%= alert %></p>
+      <form method="dialog">
+        <button class="rounded-lg bg-red-600 px-5 py-2 font-medium text-white hover:bg-red-700">
+          OK
+        </button>
+      </form>
+    </div>
+  </dialog>
+<% end %>
