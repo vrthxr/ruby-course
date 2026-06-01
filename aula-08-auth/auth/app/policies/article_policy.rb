@@ -7,6 +7,11 @@ class ArticlePolicy < ApplicationPolicy
     user&.admin? || user&.id == record.user_id
   end
 
+
+  def edit?
+    update?
+  end
+
   class Scope < ApplicationPolicy::Scope 
     def resolve
       scope.all
