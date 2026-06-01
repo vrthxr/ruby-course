@@ -6,7 +6,7 @@ Study module focused on **authentication** (who you are) and **authorization** (
 
 ## Goal
 
-Understand the full access-control story in a Rails app: sign users up and log them in with Devise, give some of them elevated privileges (admin), tie records to their owner, and gate actions behind policies with Pundit — surfacing denials to the user with a clean UI.
+Understand the full access-control story in a Rails app: sign users up and log them in with Devise, assign roles with Rolify, tie records to their owner, and gate actions behind policies with Pundit — surfacing denials to the user with a clean UI.
 
 ---
 
@@ -18,8 +18,9 @@ Understand the full access-control story in a Rails app: sign users up and log t
 - `current_user` helper to access the logged-in user
 
 ### Roles
-- `admin` boolean column on `users` (`default: false`) to mark privileged users
-- Active Record auto-generates a `user.admin?` query method from the boolean column
+- Started with an `admin` boolean column on `users` (`default: false`); Active Record auto-generates the `user.admin?` query method from it
+- Added **Rolify** for flexible roles: a `roles` table + `users_roles` join table (many-to-many), instead of one boolean column per role
+- Manage roles with `user.add_role :writer`, `user.has_role? :writer`, `user.remove_role :writer`
 
 ### Associations
 - `Article belongs_to :user` / `User has_many :articles`
@@ -28,6 +29,7 @@ Understand the full access-control story in a Rails app: sign users up and log t
 
 ### Authorization (Pundit)
 - `ArticlePolicy` with `update?` / `destroy?` → allowed when **admin OR owner** (`user&.admin? || user&.id == record.user_id`)
+- `create?` / `new?` → allowed for users with the `:writer` role (`user&.has_role? :writer`)
 - `authorize @article` in the controller triggers the matching policy method
 - `rescue_from Pundit::NotAuthorizedError` in `ApplicationController` sets a flash alert and redirects back
 - The `Scope` class is only for filtering collections (`policy_scope`); per-record permission methods live directly on the policy
@@ -46,6 +48,7 @@ Understand the full access-control story in a Rails app: sign users up and log t
 | Framework | Rails 8.1 |
 | Database | PostgreSQL |
 | Auth | Devise |
+| Roles | Rolify |
 | Authorization | Pundit |
 | CSS | Tailwind (tailwindcss-rails) |
 
@@ -66,11 +69,12 @@ bin/dev
 # visit http://localhost:3000
 ```
 
-Sign up a user through the UI, then promote it to admin from the console:
+Sign up a user through the UI, then grant privileges from the console:
 
 ```ruby
 # rails console
-User.first.update(admin: true)
+User.first.update(admin: true)   # can edit/destroy any article
+User.first.add_role :writer      # can create articles
 ```
 
 > **Windows + PostgreSQL 18 note:** `config/initializers/pg_sync.rb` forces the `pg` gem to use libpq's synchronous connection. The gem's default async connect breaks against PostgreSQL 18 on Windows ("server closed the connection unexpectedly"). Remove it once the gem or Postgres fixes the async path.
@@ -96,6 +100,8 @@ Lessons learned the hard way while building this module:
 - **Tailwind only compiles classes it can see.** New utility classes don't apply until the CSS rebuilds. `bin/dev` runs the `--watch` process; with plain `rails server` you must run `rails tailwindcss:build`.
 
 - **Centering a native `<dialog>`.** Tailwind's Preflight zeroes the `margin: auto` the browser uses to center modals, so they stick to the top-left. Center explicitly with `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`.
+
+- **`policy(collection)` still finds the right policy.** `policy(@articles).new?` works even though `@articles` is a relation, not a record: Pundit reads the object's `model_name`, which a relation delegates to its model — so it resolves to `ArticlePolicy`. For create/new checks the more explicit form is `policy(Article)` (the class itself).
 
 ---
 
