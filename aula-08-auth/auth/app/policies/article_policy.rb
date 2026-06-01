@@ -1,10 +1,10 @@
 class ArticlePolicy < ApplicationPolicy
   def update?
-    user&.admin? || user&.id == record.user_id
+    user&.has_role?(:editor) || user&.id == record.user_id || user&.admin?
   end
 
   def destroy?
-    user&.admin? || user&.id == record.user_id
+    user&.has_role?(:editor) || user&.id == record.user_id || user&.admin?
   end
 
   def new?
