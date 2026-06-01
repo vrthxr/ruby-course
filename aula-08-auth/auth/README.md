@@ -28,7 +28,7 @@ Understand the full access-control story in a Rails app: sign users up and log t
 - `belongs_to` requires a user by default, so the controller sets `@article.user = current_user` on create
 
 ### Authorization (Pundit)
-- `ArticlePolicy` with `update?` / `destroy?` → allowed when **admin OR owner** (`user&.admin? || user&.id == record.user_id`)
+- `ArticlePolicy` with `update?` / `destroy?` → allowed for the **`:editor` role, the owner, or an admin** (`user&.has_role?(:editor) || user&.id == record.user_id || user&.admin?`)
 - `create?` / `new?` → allowed for users with the `:writer` role (`user&.has_role? :writer`)
 - `authorize @article` in the controller triggers the matching policy method
 - `rescue_from Pundit::NotAuthorizedError` in `ApplicationController` sets a flash alert and redirects back
@@ -102,6 +102,8 @@ Lessons learned the hard way while building this module:
 - **Centering a native `<dialog>`.** Tailwind's Preflight zeroes the `margin: auto` the browser uses to center modals, so they stick to the top-left. Center explicitly with `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`.
 
 - **`policy(collection)` still finds the right policy.** `policy(@articles).new?` works even though `@articles` is a relation, not a record: Pundit reads the object's `model_name`, which a relation delegates to its model — so it resolves to `ArticlePolicy`. For create/new checks the more explicit form is `policy(Article)` (the class itself).
+
+- **Parenthesize method calls inside boolean expressions.** `user&.has_role? :editor || user&.id == record.user_id` is parsed by Ruby as `has_role?(:editor || ...)` — the whole `||` chain is swallowed as the argument, and since `:editor` is truthy the rest is never checked (silent bug, no error). Always write `has_role?(:editor) || ...`. The risk pattern is "method + bare argument + `||` on one line"; operators (`==`) and no-arg methods (`admin?`) are safe.
 
 ---
 
