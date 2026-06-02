@@ -27,5 +27,9 @@ RSpec.describe 'Game' do
       #verifica se um valor está dentro de um intervalo specifico
       expect(@game.release_year).to be_within(1).of(2020)
     end
+    it 'should include specific features' do
+    expect(@game.features).to include('Open-World')
+    expect(@game.features).to include('Action')
+    end
   end
 end
