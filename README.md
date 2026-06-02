@@ -18,11 +18,12 @@ Study repository documenting my Ruby and Ruby on Rails learning journey, built a
 | 06 - Git & GitHub | Version control, remote repositories, collaboration basics |
 | 07 - Rails Fundamentals | MVC structure, models, controllers, routing, Active Record in depth |
 | 08 - Authentication & Authorization | Devise, Pundit, admin role, model associations, foreign keys, migrations vs schema |
+| 09 - RSpec | Test structure with describe/context/it, expectations with expect/eq, unit testing Ruby classes |
 
 ## Stack
 
 - **Language:** Ruby
 - **Framework:** Ruby on Rails
 - **Databases:** PostgreSQL
-- **Testing:** Minitest
+- **Testing:** Minitest, RSpec
 - **Version control:** Git + GitHub
