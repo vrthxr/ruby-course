@@ -16,9 +16,10 @@ class Api::V1::BooksController < ApplicationController
   # POST /books
   def create
     @book = Book.new(book_params)
+    @book.author_id = params[:author_id]
 
     if @book.save
-      render json: @book, status: :created, location: @book, location: api_v1_book_url(@book)
+      render json: @book, status: :created, location: api_v1_book_url(@book)
     else
       render json: @book.errors, status: :unprocessable_content
     end
