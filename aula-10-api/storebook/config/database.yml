@@ -22,7 +22,11 @@ default: &default
 
 development:
   <<: *default
-  database: storebook_development
+  database: storebook
+  username: postgres
+  password: 133766
+  host: 'localhost'
+  port: 5432
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
