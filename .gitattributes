@@ -1,0 +1,13 @@
+# Ocultar arquivos não-Ruby das estatísticas do GitHub Linguist
+*.css linguist-detectable=false
+*.scss linguist-detectable=false
+*.js linguist-detectable=false
+*.html linguist-detectable=false
+Dockerfile linguist-detectable=false
+*.sh linguist-detectable=false
+*.yml linguist-detectable=false
+*.yaml linguist-detectable=false
+*.json linguist-detectable=false
+
+# Tratar vendor como código de terceiros (ignorado pelo Linguist)
+vendor/ linguist-vendored=true
