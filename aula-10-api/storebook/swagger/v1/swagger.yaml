@@ -1,0 +1,371 @@
+swagger: '2.0'
+info:
+  title: Storebook API
+  version: '1.0'
+  description: API para gerenciamento de livros e autores com autenticação JWT
+host: localhost:3000
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: 'JWT token obtido no login. Formato: Bearer <token>'
+paths:
+  /login:
+    post:
+      summary: Autentica o usuário e retorna um token JWT
+      tags:
+        - Autenticação
+      parameters:
+        - name: credentials
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                example: usuario@email.com
+              password:
+                type: string
+                example: senha123
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.abc123
+        '401':
+          description: Email ou senha inválidos
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid email or password
+  /api/v1/authors:
+    get:
+      summary: Lista todos os autores
+      tags:
+        - Authors
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Lista de autores retornada com sucesso
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Author'
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+    post:
+      summary: Cria um novo autor
+      tags:
+        - Authors
+      security:
+        - Bearer: []
+      parameters:
+        - name: author
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                example: Machado de Assis
+      responses:
+        '201':
+          description: Autor criado com sucesso
+          schema:
+            $ref: '#/definitions/Author'
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '422':
+          description: Parâmetros inválidos
+          schema:
+            type: object
+            example:
+              name:
+                - can't be blank
+  /api/v1/authors/{id}:
+    get:
+      summary: Retorna um autor específico
+      tags:
+        - Authors
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Autor encontrado
+          schema:
+            $ref: '#/definitions/Author'
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Autor não encontrado
+          schema:
+            $ref: '#/definitions/NotFoundError'
+    patch:
+      summary: Atualiza um autor
+      tags:
+        - Authors
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          example: 1
+        - name: author
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Guimarães Rosa
+      responses:
+        '200':
+          description: Autor atualizado com sucesso
+          schema:
+            $ref: '#/definitions/Author'
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Autor não encontrado
+          schema:
+            $ref: '#/definitions/NotFoundError'
+        '422':
+          description: Parâmetros inválidos
+          schema:
+            type: object
+            example:
+              name:
+                - can't be blank
+    delete:
+      summary: Remove um autor
+      tags:
+        - Authors
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          example: 1
+      responses:
+        '204':
+          description: Autor removido com sucesso
+        '401':
+          description: Não autorizado
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Autor não encontrado
+          schema:
+            $ref: '#/definitions/NotFoundError'
+  /api/v1/books:
+    get:
+      summary: Lista todos os livros
+      tags:
+        - Books
+      responses:
+        '200':
+          description: Lista de livros retornada com sucesso
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Book'
+    post:
+      summary: Cria um novo livro
+      tags:
+        - Books
+      parameters:
+        - name: book
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - title
+              - author_id
+            properties:
+              title:
+                type: string
+                example: Dom Casmurro
+              body:
+                type: string
+                example: Capitulo 1 - Do título...
+              author_id:
+                type: integer
+                example: 1
+      responses:
+        '201':
+          description: Livro criado com sucesso
+          schema:
+            $ref: '#/definitions/Book'
+        '422':
+          description: Parâmetros inválidos
+          schema:
+            type: object
+            example:
+              title:
+                - can't be blank
+              author:
+                - must exist
+  /api/v1/books/{id}:
+    get:
+      summary: Retorna um livro específico
+      tags:
+        - Books
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Livro encontrado
+          schema:
+            $ref: '#/definitions/Book'
+        '404':
+          description: Livro não encontrado
+          schema:
+            $ref: '#/definitions/NotFoundError'
+    patch:
+      summary: Atualiza um livro
+      tags:
+        - Books
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          example: 1
+        - name: book
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Dom Casmurro
+              body:
+                type: string
+                example: Capitulo 1 - Do título...
+      responses:
+        '200':
+          description: Livro atualizado com sucesso
+          schema:
+            $ref: '#/definitions/Book'
+        '404':
+          description: Livro não encontrado
+          schema:
+            $ref: '#/definitions/NotFoundError'
+        '422':
+          description: Parâmetros inválidos
+          schema:
+            type: object
+            example:
+              title:
+                - can't be blank
+    delete:
+      summary: Remove um livro
+      tags:
+        - Books
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          example: 1
+      responses:
+        '204':
+          description: Livro removido com sucesso
+        '404':
+          description: Livro não encontrado
+          schema:
+            $ref: '#/definitions/NotFoundError'
+definitions:
+  Author:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: Machado de Assis
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+  Book:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      title:
+        type: string
+        example: Dom Casmurro
+      body:
+        type: string
+        example: Capitulo 1 - Do título...
+      author_id:
+        type: integer
+        example: 1
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+  UnauthorizedError:
+    type: object
+    properties:
+      error:
+        type: string
+        example: Missing Authorization Header
+  NotFoundError:
+    type: object
+    properties:
+      error:
+        type: string
+        example: Author not found
