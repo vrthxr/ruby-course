@@ -61,13 +61,11 @@ class Api::V1::AuthorsController < ApplicationController
   end
 
   def set_author
-    @author = Author.find_by(id: params[:id])
-    unless @author
-      render json: { error: 'Author not found' }, status: :not_found
-    end
+    @author = Author.find(params[:id])
   end
 
   def author_params
     params.expect(author: [ :name ])
   end
 end
+
