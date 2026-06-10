@@ -1,5 +1,4 @@
 class Api::V1::AuthorsController < ApplicationController
-  before_action :authenticate_request
   before_action :set_author, only: %i[ show update destroy ]
 
   # GET /authors
@@ -40,26 +39,7 @@ class Api::V1::AuthorsController < ApplicationController
   end
 
   private
-
-  def authenticate_request
-    token = request.headers['Authorization']
-
-    if token.present?
-      begin
-        decoded_token = JsonWebTokenService.decode(token.split(' ').last)
-        @current_user = User.find_by(id: decoded_token['user_id'])
-
-        unless @current_user
-          render json: { error: 'Not Authorized' }, status: :unauthorized
-        end
-      rescue => _e
-        render json: { error: 'Invalid Token' }, status: :unauthorized
-      end
-    else
-      render json: { error: 'Missing Authorization Header' }, status: :unauthorized
-    end
-  end
-
+ 
   def set_author
     @author = Author.find(params[:id])
   end

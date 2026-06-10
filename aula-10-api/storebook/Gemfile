@@ -60,3 +60,5 @@ gem 'rswag'
 gem 'jsonapi-serializer'
 
 gem 'kaminari'
+
+gem 'pundit'

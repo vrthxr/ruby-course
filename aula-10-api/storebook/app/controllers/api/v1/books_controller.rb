@@ -43,6 +43,7 @@ class Api::V1::BooksController < ApplicationController
 
   # DELETE /books/1
   def destroy
+    authorize @book
     @book.destroy!
   end
 
