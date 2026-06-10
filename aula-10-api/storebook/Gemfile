@@ -58,3 +58,5 @@ gem 'jwt'
 gem 'rswag'
 
 gem 'jsonapi-serializer'
+
+gem 'kaminari'

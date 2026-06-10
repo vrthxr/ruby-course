@@ -3,9 +3,15 @@ class Api::V1::BooksController < ApplicationController
 
   # GET /books
   def index
-    @books = Book.all
-
-    render json: BookSerializer.new(@books)
+    @books = Book.includes(:author).page(params[:page]).per(2)
+    @books = @books.where(author_id: params[:author_id]) if params[:author_id].present?
+    data = BookSerializer.new(@books).serializable_hash
+    data[:meta] = {
+      total_count: @books.total_count,
+      total_pages: @books.total_pages,
+      current_page: @books.current_page
+      }
+    render json: data
   end
 
   # GET /books/1
