@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_10_174449) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_202642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_174449) do
     t.bigint "author_id", null: false
     t.text "body"
     t.datetime "created_at", null: false
+    t.datetime "notified_at"
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["author_id"], name: "index_books_on_author_id"

@@ -26,6 +26,7 @@ class Api::V1::BooksController < ApplicationController
     @book.author_id = params[:author_id]
 
     if @book.save
+      NotifyNewBookJob.perform_later(@book.id)
       render json: BookSerializer.new(@book), status: :created, location: api_v1_book_url(@book)
     else
       render json: {errors: @book.errors.full_messages }, status: :unprocessable_content
