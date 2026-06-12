@@ -7,6 +7,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :books
       resources :authors
-    end
+      resources :loans, only: %i[index create] do
+          member do
+            patch:return
+          end
+        end        
+      end
   end
 end

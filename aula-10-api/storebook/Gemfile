@@ -66,3 +66,5 @@ gem 'jsonapi-serializer'
 gem 'kaminari'
 
 gem 'pundit'
+
+gem 'aasm'

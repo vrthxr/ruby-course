@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include Pundit::Authorization
+  rescue_from AASM::InvalidTransition, with: :invalid_transition
   before_action :authenticate_request
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActionController::ParameterMissing, with: :param_missing
@@ -40,6 +41,10 @@ class ApplicationController < ActionController::API
 
   def param_missing(error)
     render json: {errors: [error.message]}, status: :bad_request
+  end
+
+  def invalid_transition(error)
+    render json: {errors: [error.message]}, status: :unprocessable_content
   end
 
 end
