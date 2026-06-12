@@ -24,20 +24,20 @@ class Api::V1::AuthorsController < ApplicationController
     @author = Author.new(author_params)
 
     if @author.save
-      render json: @author, status: :created, location: api_v1_author_url(@author)
+      render json: AuthorSerializer.new(@author), status: :created, location: api_v1_author_url(@author)
     else
-      render json: @author.errors, status: :unprocessable_content
+      render json: {errors: @author.errors.full_messages }, status: :unprocessable_content
     end
   end
 
   # PATCH/PUT /authors/1
   def update
     if @author.update(author_params)
-      render json: AuthorSerializer.new(@author)
+      render json: AuthorSerializer.new(@author)  
     else
-      render json: @author.errors, status: :unprocessable_content
+      render json: {errors: @author.errors.full_messages }, status: :unprocessable_content
     end
-  end
+end
 
   # DELETE /authors/1
   def destroy
